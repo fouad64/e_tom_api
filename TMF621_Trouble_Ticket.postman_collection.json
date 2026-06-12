@@ -1,0 +1,243 @@
+{
+	"info": {
+		"_postman_id": "7bf3b9bd-7c98-4c12-8705-1a8ebbf79471",
+		"name": "TMF621 Trouble Ticket API",
+		"description": "Postman Collection for testing the implemented TMF621 Trouble Ticket API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Create Ticket (POST)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"if (jsonData.id) {",
+							"    pm.globals.set(\"ticket_id\", jsonData.id);",
+							"    console.log(\"Saved ticket_id: \" + jsonData.id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"VOD Billing Complaint\",\n  \"description\": \"December bill shows VOD charge for movie I could not watch due to buffering\",\n  \"severity\": \"Minor\",\n  \"ticketType\": \"Bill Dispute\",\n  \"externalId\": \"CRM-2024-9921\",\n  \"priority\": \"High\",\n  \"requestedResolutionDate\": \"2026-06-15T00:00:00\",\n  \"relatedParty\": [\n    {\n      \"role\": \"customer\",\n      \"name\": \"Mr Jack Hide\"\n    }\n  ],\n  \"channel\": {\n    \"id\": \"8774\",\n    \"name\": \"Self Service\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/troubleTicket/v2/troubleTicket",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"troubleTicket",
+						"v2",
+						"troubleTicket"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Get Ticket by ID (GET)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/troubleTicket/v2/troubleTicket/{{ticket_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"troubleTicket",
+						"v2",
+						"troubleTicket",
+						"{{ticket_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. List All Tickets (GET)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/troubleTicket/v2/troubleTicket",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"troubleTicket",
+						"v2",
+						"troubleTicket"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. List Tickets - Filter by Status (GET)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/troubleTicket/v2/troubleTicket?status=Acknowledged",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"troubleTicket",
+						"v2",
+						"troubleTicket"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "Acknowledged"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Update Status (PATCH)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"status\": \"InProgress\",\n  \"statusChangeReason\": \"Agent Jack assigned, investigation started\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/troubleTicket/v2/troubleTicket/{{ticket_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"troubleTicket",
+						"v2",
+						"troubleTicket",
+						"{{ticket_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Add Note to Ticket (PATCH)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"note\": [\n    {\n      \"author\": \"Agent Jack\",\n      \"text\": \"Verified VOD logs. Confirmed buffering stream interrupt at 16:42:25.\",\n      \"type\": \"internal\"\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/troubleTicket/v2/troubleTicket/{{ticket_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"troubleTicket",
+						"v2",
+						"troubleTicket",
+						"{{ticket_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. Error - Validation Missing Fields (POST)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"I am missing other fields\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/troubleTicket/v2/troubleTicket",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"troubleTicket",
+						"v2",
+						"troubleTicket"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. Error - Not Found (GET)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/troubleTicket/v2/troubleTicket/non-existent-uuid",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"troubleTicket",
+						"v2",
+						"troubleTicket",
+						"non-existent-uuid"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
